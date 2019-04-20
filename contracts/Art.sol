@@ -52,6 +52,7 @@ contract Arts {
         peopleInfo[newOwner].ownedArts.push(artInfo[art]);
         Transaction t = (new Transaction)(_transactionId, artInfo[art].artId, artInfo[art].artName, _price, Time_call(), oldOwner, newOwner);
         artInfo[art].history.push(t);
+        artInfo[art].owner = newOwner;
     }
     
 }
