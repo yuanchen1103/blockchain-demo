@@ -11,7 +11,7 @@ contract Arts {
       address owner;
       Transaction[] history;
     }
-    Art[] arts;
+    uint[] arts;
 
     mapping(uint => Art) artInfo;
     mapping(uint => Transaction) transactionInfo;
@@ -23,11 +23,11 @@ contract Arts {
     struct People {
       uint id;
       string name;
-      Art[] ownedArts;
+      uint[] ownedArts;
     }
     
     
-    constructor(Art[] memory _array) public {
+    constructor(uint[] memory _array) public {
 		  arts = _array;
     }
     
@@ -46,11 +46,11 @@ contract Arts {
         require(artInfo[art].owner == oldOwner);
         
         for(uint i = 0; i < peopleInfo[oldOwner].ownedArts.length; i++){
-          if(peopleInfo[oldOwner].ownedArts[i].artId == artInfo[art].artId) {
+          if(peopleInfo[oldOwner].ownedArts[i] == artInfo[art].artId) {
             delete peopleInfo[oldOwner].ownedArts[i];
           }
         }
-        peopleInfo[newOwner].ownedArts.push(artInfo[art]);
+        peopleInfo[newOwner].ownedArts.push(art);
         Transaction t = (new Transaction)(_transactionId, artInfo[art].artId, artInfo[art].artName, _price, Time_call(), oldOwner, newOwner);
         artInfo[art].history.push(t);
         artInfo[art].owner = newOwner;
