@@ -1,59 +1,26 @@
 pragma solidity ^0.5.0;
-pragma experimental ABIEncoderV2;
-
 import "./Transaction.sol";
 
-contract Arts {
-
-    struct Art {
-      string artName;
-      uint artId;
-      address owner;
-      Transaction[] history;
-    }
-    uint[] arts;
-
-    mapping(uint => Art) artInfo;
-    mapping(uint => Transaction) transactionInfo;
-
-    mapping(uint => address payable) artOwner;
-
-    mapping(address => People) peopleInfo;
-
-    struct People {
-      uint id;
-      string name;
-      uint[] ownedArts;
-    }
-    
-    
-    constructor(uint[] memory _array) public {
-		  arts = _array;
-    }
-    
-    function getArtInfo(uint _artId) public view returns(uint, string memory, string memory, Transaction[] memory) {
-        Art memory art = artInfo[_artId];
-        return (art.artId, art.artName, peopleInfo[art.owner].name, art.history);
-    }
-
-    function Time_call() public view returns (uint256){
-        return now;
-    }
-
-    function applyTransaction(uint _transactionId, address payable oldOwner, address payable newOwner, uint art, uint _price) public {
-        require(oldOwner != newOwner);
-        require(_price > 0);
-        require(artInfo[art].owner == oldOwner);
-        
-        for(uint i = 0; i < peopleInfo[oldOwner].ownedArts.length; i++){
-          if(peopleInfo[oldOwner].ownedArts[i] == artInfo[art].artId) {
-            delete peopleInfo[oldOwner].ownedArts[i];
-          }
-        }
-        peopleInfo[newOwner].ownedArts.push(art);
-        Transaction t = (new Transaction)(_transactionId, artInfo[art].artId, artInfo[art].artName, _price, Time_call(), oldOwner, newOwner);
-        artInfo[art].history.push(t);
-        artInfo[art].owner = newOwner;
-    }
-    
+contract Art {
+  string public artName;
+  uint public artId;
+  uint public owner;
+  Transaction[] public history;
+  constructor(uint _artId, string memory _artName, uint _owner) public payable {
+    artId = _artId;
+    artName = _artName;
+    owner = _owner;
+  }
+  function getArtInfo() public view returns(uint, string memory, uint) {
+    return (artId, artName, owner);
+  }
+  function getHistory() public view returns(Transaction[] memory) {
+    return history;
+  }
+  function addHistory(Transaction t) public payable {
+      history.push(t);
+  }
+  function changeOwner(uint o) public payable {
+      owner = o;
+  }
 }
